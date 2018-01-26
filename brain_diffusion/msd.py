@@ -145,7 +145,7 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
             df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1
             df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i
             df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i
-            df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n)
+            df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i
             df[(i-1)*n:i*n, 5] = np.zeros(n)
             df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))
     >>> np.savetxt("../Traj_test_data_1.tif.csv", df, delimiter=",")
