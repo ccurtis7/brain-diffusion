@@ -10,9 +10,7 @@ import numpy.ma as ma
 import numpy.linalg as la
 import numpy.testing as npt
 
-modulef = 'C:/Users/koolk/Desktop/brain-diffusion/brain_diffusion/Chad/'
-sys.path.insert(0, modulef)
-from msd import fillin2
+from brain_diffusion.msd import fillin2, MSD_iteration, vectorized_MMSD_calcs
 
 
 def test_fillin2():
