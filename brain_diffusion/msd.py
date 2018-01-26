@@ -154,6 +154,18 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
     >>> MSD_iteration(folder, name)
 
     """
+
+    assert type(folder) is str, 'folder must be a string'
+    assert folder[-1] == '/', 'folder must end with a /'
+    assert type(name) is str, 'name must be a string'
+    assert 'Traj_{}_1.tif.csv'.format(name) in os.listdir(folder), 'folder must contain Traj_{}_1_.tif.csv'.format(name)
+    assert type(cut) is int, 'cut must be an integer'
+    assert type(totvids) is int, "totvids must be an integer"
+    for i in range(1, totvids+1):
+        assert 'Traj_{}_{}.tif.csv'.format(name, i) in os.listdir(folder), "folder must contain 'Traj_{}_{}_.tif.csv".format(name, i)
+    assert type(conversion) is tuple, "conversion must be a tuple"
+    assert len(conversion) == 3, "conversion must contain 3 elements"
+
     frames = 0
     trajectory = dict()
     tots = dict()  # Total particles in each video
@@ -327,6 +339,12 @@ def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m):
             [   0.,    0.]]))
 
     """
+
+    assert type(frames) is int, 'frames must be an integer'
+    assert type(total1) is int, 'total1 must be an integer'
+    assert type(xs_m) is np.ndarray, 'xs_m must be a numpy array'
+    assert type(ys_m) is np.ndarray, 'ys_m must an a numpy array'
+    assert xs_m.shape == ys_m.shape, 'xs_m and ys_m must be the same size'
 
     SM1x = np.zeros((frames, total1))
     SM1y = np.zeros((frames, total1))
