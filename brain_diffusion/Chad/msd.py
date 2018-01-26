@@ -120,6 +120,8 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
     ----------
     total1 : integer
         Total number of particles contained in all csv files being analyzed.
+    frames : integer
+        Total number of frames in the video.
     x_m : numpy array of dimensions frames x particles
         Contains x coordinates of all trajectories in all csv files being
         analyzed.  If a particle isn't present in a frame, then it is filled in
@@ -222,51 +224,139 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
     xs_m = xs[:, :total1]
     ys_m = ys[:, :total1]
 
-    return total1, xs_m, ys_m, x_m, y_m
+    return total1, frames, xs_m, ys_m, x_m, y_m
 
 
-def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m, x_m, y_m, frame_m):
+def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m):
+    """
+    Calculates the geometrically averaged mean squared displacement of the input trajectories.
 
-    SM1x = np.zeros((frames, total1-1))
-    SM1y = np.zeros((frames, total1-1))
-    SM2xy = np.zeros((frames, total1-1))
+    Parameters
+    ----------
+    frames : integer
+        Total number of frames in the video. Output from MSD_iteration
+    total1 : integer
+        Total number of particles contained in all csv files being analyzed.
+        Output from MSD_iteration.
+    xs_m : numpy array of dimensions frames x particles
+        Contains x coordinates of all trajectories in all csv files being
+        analyzed.  Trajectories have been shifted such that all trajectories
+        begin at frame 0. Output from MSD_iteration.
+    ys_m : numpy array of dimensions frames x particles
+        Similar to xs_m with y coordinates. Output from MSD_iteration.
+
+    Returns
+    ----------
+    geoM2xy : frames x 1 numpy.ndarray of float64s
+        Average of the log 2D MSDs of input xy data.
+    gSEM : frames x 1 numpy.ndarray of float64s
+        Standard error of the log 2D MSDs of input xy data.
+    SM1x : frames x total1 numpy.ndarray of float64s
+        x component of the 2D MSD of input xy data for each trajectory.
+    SM1y : frames x total1 numpy.ndarray of float64s
+        y component of the 2D MSD of input xy data for each trajectory.
+    SM2xy : frames x total1 numpy.ndarray of float64s
+        2D MSDs of input xy data for each trajectory.
+
+    Examples:
+    ----------
+    >>> n = 6
+    >>> p = 2
+    >>> df = np.zeros((p*n, 12))
+    >>> for i in range(1, p+1):
+            df[(i-1)*n:i*n, 0] = np.ones(n) + i - 1
+            df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1
+            df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i
+            df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i
+            df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i
+            df[(i-1)*n:i*n, 5] = np.zeros(n)
+            df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))
+    >>> np.savetxt("../Traj_test_data_1.tif.csv", df, delimiter=",")
+    >>> folder = '../'
+    >>> name = 'test_data'
+    >>> cut = 1
+    >>> totvids = 1
+    >>> conversion = (1, 1, 1)
+    >>> total1, frames, xs_m, ys_m, x_m, y_m = MSD_iteration(folder, name)
+    >>> vectorized_MMSD_calcs(frames, total1, xs_m, ys_m)
+    (array([ 0.        ,  1.38629436,  2.07944154,  2.99573227,  3.4657359 ,
+             3.95124372,  4.27666612,  4.60517019,  4.85203026,  5.09986643,
+             5.29831737,  0.        ,  0.        ,  0.        ]),
+     array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+     array([[   0.,    0.],
+            [   2.,    2.],
+            [   4.,    4.],
+            [  10.,   10.],
+            [  16.,   16.],
+            [  26.,   26.],
+            [  36.,   36.],
+            [  50.,   50.],
+            [  64.,   64.],
+            [  82.,   82.],
+            [ 100.,  100.],
+            [   0.,    0.],
+            [   0.,    0.],
+            [   0.,    0.]]),
+     array([[   0.,    0.],
+            [   2.,    2.],
+            [   4.,    4.],
+            [  10.,   10.],
+            [  16.,   16.],
+            [  26.,   26.],
+            [  36.,   36.],
+            [  50.,   50.],
+            [  64.,   64.],
+            [  82.,   82.],
+            [ 100.,  100.],
+            [   0.,    0.],
+            [   0.,    0.],
+            [   0.,    0.]]),
+     array([[   0.,    0.],
+            [   4.,    4.],
+            [   8.,    8.],
+            [  20.,   20.],
+            [  32.,   32.],
+            [  52.,   52.],
+            [  72.,   72.],
+            [ 100.,  100.],
+            [ 128.,  128.],
+            [ 164.,  164.],
+            [ 200.,  200.],
+            [   0.,    0.],
+            [   0.,    0.],
+            [   0.,    0.]]))
+
+    """
+
+    SM1x = np.zeros((frames, total1))
+    SM1y = np.zeros((frames, total1))
+    SM2xy = np.zeros((frames, total1))
 
     xs_m = ma.masked_equal(xs_m, 0)
     ys_m = ma.masked_equal(ys_m, 0)
 
-    x_m = ma.masked_equal(x_m, 0)
-    y_m = ma.masked_equal(y_m, 0)
+    geoM1x = np.zeros(frames)
+    geoM1y = np.zeros(frames)
 
-    geoM1x = np.zeros(frame_m)
-    geoM1y = np.zeros(frame_m)
-
-    for frame in range(1, frame_m):
-        bx = xs_m[frame, :]
+    for frame in range(1, frames):
+        bx = xs_m[frame:, :]
         cx = xs_m[:-frame, :]
         Mx = (bx - cx)**2
-
         Mxa = np.mean(Mx, axis=0)
-        # Mxab = np.mean(np.log(Mxa), axis=0)
 
-        # geoM1x[frame] = Mxab
-
-        by = ys_m[frame, :]
+        by = ys_m[frame:, :]
         cy = ys_m[:-frame, :]
         My = (by - cy)**2
-
         Mya = np.mean(My, axis=0)
-        # Myab = np.mean(np.log(Mya), axis=0)
 
-        # geoM1y[frame] = Myab
         SM1x[frame, :] = Mxa
         SM1y[frame, :] = Mya
 
-    dist = np.log(Mya+Mxa)
-    # unmask = np.invert(ma.getmask(dist))
-    # dist2 = dist[unmask]
-
-    geoM2xy = np.ma.mean(dist, axix=0)
-    gSEM = stat.sem(dist, axis=0)
     SM2xy = SM1x + SM1y
+    dist = ma.log(ma.masked_equal(SM2xy, 0))
+
+    geoM2xy = ma.mean(dist, axis=1)
+    gSEM = stat.sem(dist, axis=1)
+    geoM2xy = geoM2xy.data
 
     return geoM2xy, gSEM, SM1x, SM1y, SM2xy

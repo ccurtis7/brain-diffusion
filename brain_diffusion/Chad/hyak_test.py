@@ -19,15 +19,15 @@ size = comm.Get_size()
 
 folder = "./"
 path = "./geoM2xy_{sample_name}.csv"
-conversion = (0.16, 20.08, 1)  # (0.3, 3.95, 1)
+conversion = (1, 1, 1)  # (0.3, 3.95, 1)
 cut = 1
-base = '37C_72pH'
+base = 'test'
 
 parameters = {}
-parameters["channels"] = ["RED"]
-parameters["surface functionalities"] = ["nPEG"]
-parameters["slices"] = ["S1", "S2"]
-parameters["videos"] = [1, 2]
+parameters["channels"] = ["test"]
+parameters["surface functionalities"] = ["test"]
+parameters["slices"] = ["test"]
+parameters["videos"] = [1]
 parameters["replicates"] = [1, 2, 3]
 
 channels = parameters["channels"]
