@@ -7,12 +7,64 @@ import matplotlib.pyplot as plt
 import scipy.stats as stat
 
 
-def histogram_by_video(SMfilename, xlabel='Log Diffusion Coefficient Dist', ylabel='Trajectory Count', fps=100.02, frames=651,
+def histogram_by_video(SMfilename, xlabel='Log Diffusion Coefficient Dist', ylabel='Trajectory Count', fps=100.02,
                        y_range=5000, frame_range=range(5, 30, 5), analysis='log', theta='D'):
+    """
+    Plots a histogram of mean squared displacements or diffusion coefficients from input data.
 
+    Parameters
+    ----------
+    SMfilename : string
+        Filename of particle MSDs.  Must be a csv file, comma delimited. Must be
+        organized as frames x particles.
+    xlabel : string
+        X label of the output graph.
+    ylabel : string
+        Y label of the output graph.
+    fps : float or int
+        The frame rate of the video being analyzed.  Only required if graphing
+        diffusion coefficients rather than mean squared displacements.
+    y_range : int
+        Y range of the output graph.
+    frame_range : range
+        Range containing which frames the user wishes to be plotted.
+    analysis : string
+        Desired type of data to be plotted.  If input is 'log', plots the natural
+        logarithm of the data.  Any other input will plot the raw input data.
+    theta : string
+        Desired type of data to be plotted.  If input is 'D', plots diffusion
+        coefficients.  Any other input will plot the mean squared displacements.
+
+    Returns
+    ----------
+    Returns 'Graph completed successfully' if function is successful.
+
+    Examples
+    ----------
+    nframe = 51
+    npar = 1000
+    SMxy = np.zeros((nframe, npar))
+    for frame in range(0, nframe):
+        SMxy[frame, :] = np.random.normal(loc=0.5*frame, scale=0.5, size=npar)
+
+    np.savetxt('sample_file.csv', SMxy, delimiter=',')
+    histogram_by_video('sample_file.csv', y_range=500, analysis="nlog", theta="MSD")
+    os.remove('sample_file.csv')
+    os.remove('sample_file_hist.png')
     """
 
-    """
+    assert type(SMfilename) is str, "SMfilename must be a string"
+    assert SMfilename.split('.')[1] == 'csv', "SMfilename must be a csv file."
+    # assert os.path.isfile(SMfilename), "SMfilename must exist."
+    assert type(np.genfromtxt(SMfilename, delimiter=",")) == np.ndarray, "SMfilename must be comma delimited."
+    assert type(xlabel) is str, "xlabel must be a string"
+    assert type(ylabel) is str, "ylabel must be a string"
+    assert type(fps) is float or int, "fps must be float or int"
+    assert type(y_range) is int, "y_range must be int"
+    assert type(frame_range) is range, "frame_range must be a range"
+    assert type(analysis) is str, "analysis must be string"
+    assert type(theta) is str, "theta must be string"
+
     # load data
     SM2xy = np.genfromtxt(SMfilename, delimiter=",")
 
