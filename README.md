@@ -1,4 +1,4 @@
-# Project Title
+# brain_diffusion
 
 This project calculates mean squared displacements and diffusion coefficients from
 input trajectory datasets.  Input datasets are generated from the ImageJ particle
@@ -62,7 +62,7 @@ Add additional notes about how to deploy this on a live system
 
 * **Chad Curtis** - *Project lead* - [ccurtis7](https://github.com/ccurtis7)
 * **Rick Liao** - *Initial work* - [rickliao18](https://github.com/rickliao18)
-* **Ian Faulkner** - *Initial work* - [ianfaulkner] (https://github.com/ianfaulkner)
+* **Ian Faulkner** - *Initial work* - [ianfaulkner](https://github.com/ianfaulkner)
 
 See also the list of [contributors](https://github.com/ccurtis7/brain_diffusion/graphs/contributors) who participated in this project.
 
