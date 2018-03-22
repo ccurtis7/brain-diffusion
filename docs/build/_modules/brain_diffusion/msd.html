@@ -1,0 +1,573 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>brain_diffusion.msd &mdash; brain_diffusion 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="brain_diffusion 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> brain_diffusion
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">brain_diffusion</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>brain_diffusion.msd</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for brain_diffusion.msd</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">scipy.optimize</span> <span class="kn">as</span> <span class="nn">opt</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stat</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="kn">as</span> <span class="nn">ma</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="kn">as</span> <span class="nn">la</span>
+
+
+<div class="viewcode-block" id="fillin2"><a class="viewcode-back" href="../../api/msd.html#brain_diffusion.msd.fillin2">[docs]</a><span class="k">def</span> <span class="nf">fillin2</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    fillin2(data)</span>
+
+<span class="sd">    Fills in blanks in an input trajectory dataset.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : numpy array</span>
+<span class="sd">        Must have 5 columns containing in order Track ID, frames, x coordinates,</span>
+<span class="sd">        y coordinates, and z coordinates.  Must contain a single Track ID, no</span>
+<span class="sd">        more.  Frames must be in ascending order.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    filledin : numpy array</span>
+<span class="sd">        Numpy array of size frames x 5 containing Track ID, frames, x</span>
+<span class="sd">        coordinates, y coordinates, and z coordinates.  Frames are filled in</span>
+<span class="sd">        using a carryover method (no regression performed).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; n = 6</span>
+<span class="sd">    &gt;&gt;&gt; df = np.zeros((6, 5))</span>
+<span class="sd">    &gt;&gt;&gt; df[:, 0] = np.ones(6)</span>
+<span class="sd">    &gt;&gt;&gt; df[:, 1] = np.linspace(0, 100, 6)</span>
+<span class="sd">    &gt;&gt;&gt; df[:, 2] = np.linspace(0, 100, 6)</span>
+<span class="sd">    &gt;&gt;&gt; df[:, 3] = np.linspace(0, 100, 6)</span>
+<span class="sd">    &gt;&gt;&gt; df[:, 4] = np.zeros(6)</span>
+<span class="sd">    &gt;&gt;&gt; fillin2(df)</span>
+<span class="sd">    array([[  1.,   0.,   0.,   0.,   0.],</span>
+<span class="sd">           [  1.,   1.,   0.,   0.,   0.],</span>
+<span class="sd">           [  1.,   2.,   2.,   2.,   0.],</span>
+<span class="sd">           [  1.,   3.,   2.,   2.,   0.],</span>
+<span class="sd">           [  1.,   4.,   4.,   4.,   0.],</span>
+<span class="sd">           [  1.,   5.,   4.,   4.,   0.],</span>
+<span class="sd">           [  1.,   6.,   6.,   6.,   0.],</span>
+<span class="sd">           [  1.,   7.,   6.,   6.,   0.],</span>
+<span class="sd">           [  1.,   8.,   8.,   8.,   0.],</span>
+<span class="sd">           [  1.,   9.,   8.,   8.,   0.],</span>
+<span class="sd">           [  1.,  10.,  10.,  10.,   0.]])</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">&quot;Input array must have five columns.&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="s2">&quot;Input must be a numpy array&quot;</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))),</span> <span class="s2">&quot;Frames must all increase.&quot;</span>
+    <span class="k">assert</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;Array must not be empty.&quot;</span>
+
+    <span class="n">shap</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">shape1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+    <span class="n">newshap</span> <span class="o">=</span> <span class="n">shap</span> <span class="o">-</span> <span class="n">shape1</span>
+    <span class="n">filledin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">newshap</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">filledin</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">filledin</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">shape1</span><span class="p">,</span> <span class="n">shap</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">newshap</span><span class="p">)</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">other</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tot</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">newshap</span><span class="p">):</span>
+        <span class="c1"># if a frame isn&#39;t skipped</span>
+        <span class="k">if</span> <span class="n">filledin</span><span class="p">[</span><span class="n">num</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">frames</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="n">new</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">count</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">filledin</span><span class="p">[</span><span class="n">num</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">frames</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="n">new</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">new</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">filledin</span><span class="p">[</span><span class="n">num</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="n">new</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">filledin</span><span class="p">[</span><span class="n">num</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="n">new</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="n">count</span> <span class="o">+</span> <span class="n">new</span> <span class="o">+</span> <span class="n">other</span>
+
+    <span class="k">return</span> <span class="n">filledin</span>
+
+</div>
+<div class="viewcode-block" id="MSD_iteration"><a class="viewcode-back" href="../../api/msd.html#brain_diffusion.msd.MSD_iteration">[docs]</a><span class="k">def</span> <span class="nf">MSD_iteration</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cut</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">totvids</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">conversion</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Arranges trajectory xy data into numpy arrays of dimensions frames x particles</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    folder : string</span>
+<span class="sd">        Directory containing datasets to be analyzed.</span>
+<span class="sd">    name : string</span>
+<span class="sd">        Base name of files to be analzed.  The code has a very specific naming</span>
+<span class="sd">        convenction, and requires files to be of the structure:</span>
+
+<span class="sd">        Traj_{}_{}.csv.format(name, video_number)</span>
+
+<span class="sd">        where name is the base name of the files and video number is the number</span>
+<span class="sd">        associated with the video.  Numbers must begin at 1 and increase in</span>
+<span class="sd">        units of 1.</span>
+<span class="sd">    cut : integer</span>
+<span class="sd">        Minimum number of frames for a trajectory to be included in the final</span>
+<span class="sd">        dataset.  Trajectories in the csv file with less datasets will be cut</span>
+<span class="sd">        out.</span>
+<span class="sd">    totvids : integer</span>
+<span class="sd">        Total number of csv files to be compiled in the dataset.</span>
+<span class="sd">    conversion: list of floats or integers</span>
+<span class="sd">        Contains the frames per second associated with the video, the xy pixel</span>
+<span class="sd">        resolution, and the z-stack depth respectively.  Currently the code</span>
+<span class="sd">        discards z information.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    total1 : integer</span>
+<span class="sd">        Total number of particles contained in all csv files being analyzed.</span>
+<span class="sd">    frames : integer</span>
+<span class="sd">        Total number of frames in the video.</span>
+<span class="sd">    x_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Contains x coordinates of all trajectories in all csv files being</span>
+<span class="sd">        analyzed.  If a particle isn&#39;t present in a frame, then it is filled in</span>
+<span class="sd">        with a 0.</span>
+<span class="sd">    y_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Similar to x_m with y coordinates.</span>
+<span class="sd">    xs_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Contains x coordinates of all trajectories in all csv files being</span>
+<span class="sd">        analyzed.  Trajectories have been shifted such that all trajectories</span>
+<span class="sd">        begin at frame 0.</span>
+<span class="sd">    ys_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Similar to xs_m with y coordinates.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; n = 6</span>
+<span class="sd">    &gt;&gt;&gt; p = 2</span>
+<span class="sd">    &gt;&gt;&gt; df = np.zeros((p*n, 12))</span>
+<span class="sd">    &gt;&gt;&gt; for i in range(1, p+1):</span>
+<span class="sd">            df[(i-1)*n:i*n, 0] = np.ones(n) + i - 1</span>
+<span class="sd">            df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1</span>
+<span class="sd">            df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 5] = np.zeros(n)</span>
+<span class="sd">            df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))</span>
+<span class="sd">    &gt;&gt;&gt; np.savetxt(&quot;../Traj_test_data_1.tif.csv&quot;, df, delimiter=&quot;,&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; folder = &#39;../&#39;</span>
+<span class="sd">    &gt;&gt;&gt; name = &#39;test_data&#39;</span>
+<span class="sd">    &gt;&gt;&gt; MSD_iteration(folder, name)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">folder</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;folder must be a string&#39;</span>
+    <span class="k">assert</span> <span class="n">folder</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;folder must end with a /&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s1">&#39;name must be a string&#39;</span>
+    <span class="k">assert</span> <span class="s1">&#39;Traj_{}_1.tif.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">),</span> <span class="s1">&#39;folder must contain Traj_{}_1_.tif.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">cut</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;cut must be an integer&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">totvids</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;totvids must be an integer&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">totvids</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">assert</span> <span class="s1">&#39;Traj_{}_{}.tif.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">folder</span><span class="p">),</span> <span class="s2">&quot;folder must contain &#39;Traj_{}_{}_.tif.csv&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">conversion</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">tuple</span><span class="p">,</span> <span class="s2">&quot;conversion must be a tuple&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">conversion</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">&quot;conversion must contain 3 elements&quot;</span>
+
+    <span class="n">frames</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">trajectory</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">tots</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Total particles in each video</span>
+    <span class="n">newtots</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># Cumulative total particles.</span>
+    <span class="n">newtots</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tlen</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">tlength</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">tlength</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">totvids</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">folder</span><span class="o">+</span><span class="s1">&#39;Traj_{}_{}.tif.csv&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">num</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+        <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">tots</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">newtots</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">newtots</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">tots</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+
+        <span class="n">tlen</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">tlen</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">frames</span><span class="p">:</span>
+            <span class="n">frames</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">placeholder</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">tlength</span><span class="p">[</span><span class="n">totvids</span><span class="p">],</span> <span class="mi">11</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">totvids</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="n">placeholder</span><span class="p">[</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">trajectory</span><span class="p">[</span><span class="n">num</span><span class="p">]</span>
+        <span class="n">placeholder</span><span class="p">[</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">[</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span><span class="n">tlength</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">newtots</span><span class="p">[</span><span class="n">num</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="n">rawdataset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">placeholder</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">particles</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">particles</span><span class="p">))</span>
+    <span class="n">total1</span> <span class="o">=</span> <span class="n">total</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">rawdataset</span> <span class="o">=</span> <span class="n">placeholder</span><span class="p">[:,</span> <span class="p">:]</span>
+
+    <span class="n">fixed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">placeholder</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">fixed</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">rawdataset</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">fixed</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversion</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">rawdataset</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span>
+    <span class="n">fixed</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">conversion</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">rawdataset</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+
+    <span class="n">nones</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cutoff</span> <span class="o">=</span> <span class="n">cut</span>
+    <span class="k">for</span> <span class="n">num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">total1</span><span class="p">):</span>
+
+        <span class="n">hold</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">particles</span> <span class="o">==</span> <span class="n">num</span><span class="p">)</span>
+        <span class="n">itindex</span> <span class="o">=</span> <span class="n">hold</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">min1</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">itindex</span><span class="p">)</span>
+        <span class="n">max1</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">itindex</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max1</span> <span class="o">-</span> <span class="n">min1</span> <span class="o">&lt;</span> <span class="n">cutoff</span><span class="p">:</span>
+            <span class="n">nones</span> <span class="o">=</span> <span class="n">nones</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">holdplease</span> <span class="o">=</span> <span class="n">fillin2</span><span class="p">(</span><span class="n">fixed</span><span class="p">[</span><span class="n">min1</span><span class="p">:</span><span class="n">max1</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">])</span>
+            <span class="n">x</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span> <span class="o">-</span> <span class="n">nones</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">holdplease</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">y</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span> <span class="o">-</span> <span class="n">nones</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">holdplease</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+
+            <span class="n">xs</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">num</span> <span class="o">-</span> <span class="n">nones</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">holdplease</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="n">ys</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="nb">int</span><span class="p">(</span><span class="n">holdplease</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">num</span> <span class="o">-</span> <span class="n">nones</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">holdplease</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span>
+
+    <span class="n">total1</span> <span class="o">=</span> <span class="n">total1</span> <span class="o">-</span> <span class="n">nones</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">x_m</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="p">:</span><span class="n">total1</span><span class="p">]</span>
+    <span class="n">y_m</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span> <span class="p">:</span><span class="n">total1</span><span class="p">]</span>
+    <span class="n">xs_m</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">total1</span><span class="p">]</span>
+    <span class="n">ys_m</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[:,</span> <span class="p">:</span><span class="n">total1</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">total1</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">xs_m</span><span class="p">,</span> <span class="n">ys_m</span><span class="p">,</span> <span class="n">x_m</span><span class="p">,</span> <span class="n">y_m</span>
+
+</div>
+<div class="viewcode-block" id="vectorized_MMSD_calcs"><a class="viewcode-back" href="../../api/msd.html#brain_diffusion.msd.vectorized_MMSD_calcs">[docs]</a><span class="k">def</span> <span class="nf">vectorized_MMSD_calcs</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">total1</span><span class="p">,</span> <span class="n">xs_m</span><span class="p">,</span> <span class="n">ys_m</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates the geometrically averaged mean squared displacement of the input trajectories.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frames : integer</span>
+<span class="sd">        Total number of frames in the video. Output from MSD_iteration</span>
+<span class="sd">    total1 : integer</span>
+<span class="sd">        Total number of particles contained in all csv files being analyzed.</span>
+<span class="sd">        Output from MSD_iteration.</span>
+<span class="sd">    xs_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Contains x coordinates of all trajectories in all csv files being</span>
+<span class="sd">        analyzed.  Trajectories have been shifted such that all trajectories</span>
+<span class="sd">        begin at frame 0. Output from MSD_iteration.</span>
+<span class="sd">    ys_m : numpy array of dimensions frames x particles</span>
+<span class="sd">        Similar to xs_m with y coordinates. Output from MSD_iteration.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    geoM2xy : frames x 1 numpy.ndarray of float64s</span>
+<span class="sd">        Average of the log 2D MSDs of input xy data.</span>
+<span class="sd">    gSEM : frames x 1 numpy.ndarray of float64s</span>
+<span class="sd">        Standard error of the log 2D MSDs of input xy data.</span>
+<span class="sd">    SM1x : frames x total1 numpy.ndarray of float64s</span>
+<span class="sd">        x component of the 2D MSD of input xy data for each trajectory.</span>
+<span class="sd">    SM1y : frames x total1 numpy.ndarray of float64s</span>
+<span class="sd">        y component of the 2D MSD of input xy data for each trajectory.</span>
+<span class="sd">    SM2xy : frames x total1 numpy.ndarray of float64s</span>
+<span class="sd">        2D MSDs of input xy data for each trajectory.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; n = 6</span>
+<span class="sd">    &gt;&gt;&gt; p = 2</span>
+<span class="sd">    &gt;&gt;&gt; df = np.zeros((p*n, 12))</span>
+<span class="sd">    &gt;&gt;&gt; for i in range(1, p+1):</span>
+<span class="sd">            df[(i-1)*n:i*n, 0] = np.ones(n) + i - 1</span>
+<span class="sd">            df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1</span>
+<span class="sd">            df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i</span>
+<span class="sd">            df[(i-1)*n:i*n, 5] = np.zeros(n)</span>
+<span class="sd">            df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))</span>
+<span class="sd">    &gt;&gt;&gt; np.savetxt(&quot;../Traj_test_data_1.tif.csv&quot;, df, delimiter=&quot;,&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; folder = &#39;../&#39;</span>
+<span class="sd">    &gt;&gt;&gt; name = &#39;test_data&#39;</span>
+<span class="sd">    &gt;&gt;&gt; cut = 1</span>
+<span class="sd">    &gt;&gt;&gt; totvids = 1</span>
+<span class="sd">    &gt;&gt;&gt; conversion = (1, 1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; total1, frames, xs_m, ys_m, x_m, y_m = MSD_iteration(folder, name)</span>
+<span class="sd">    &gt;&gt;&gt; vectorized_MMSD_calcs(frames, total1, xs_m, ys_m)</span>
+<span class="sd">    (array([ 0.        ,  1.38629436,  2.07944154,  2.99573227,  3.4657359 ,</span>
+<span class="sd">             3.95124372,  4.27666612,  4.60517019,  4.85203026,  5.09986643,</span>
+<span class="sd">             5.29831737,  0.        ,  0.        ,  0.        ]),</span>
+<span class="sd">     array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),</span>
+<span class="sd">     array([[   0.,    0.],</span>
+<span class="sd">            [   2.,    2.],</span>
+<span class="sd">            [   4.,    4.],</span>
+<span class="sd">            [  10.,   10.],</span>
+<span class="sd">            [  16.,   16.],</span>
+<span class="sd">            [  26.,   26.],</span>
+<span class="sd">            [  36.,   36.],</span>
+<span class="sd">            [  50.,   50.],</span>
+<span class="sd">            [  64.,   64.],</span>
+<span class="sd">            [  82.,   82.],</span>
+<span class="sd">            [ 100.,  100.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.]]),</span>
+<span class="sd">     array([[   0.,    0.],</span>
+<span class="sd">            [   2.,    2.],</span>
+<span class="sd">            [   4.,    4.],</span>
+<span class="sd">            [  10.,   10.],</span>
+<span class="sd">            [  16.,   16.],</span>
+<span class="sd">            [  26.,   26.],</span>
+<span class="sd">            [  36.,   36.],</span>
+<span class="sd">            [  50.,   50.],</span>
+<span class="sd">            [  64.,   64.],</span>
+<span class="sd">            [  82.,   82.],</span>
+<span class="sd">            [ 100.,  100.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.]]),</span>
+<span class="sd">     array([[   0.,    0.],</span>
+<span class="sd">            [   4.,    4.],</span>
+<span class="sd">            [   8.,    8.],</span>
+<span class="sd">            [  20.,   20.],</span>
+<span class="sd">            [  32.,   32.],</span>
+<span class="sd">            [  52.,   52.],</span>
+<span class="sd">            [  72.,   72.],</span>
+<span class="sd">            [ 100.,  100.],</span>
+<span class="sd">            [ 128.,  128.],</span>
+<span class="sd">            [ 164.,  164.],</span>
+<span class="sd">            [ 200.,  200.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.],</span>
+<span class="sd">            [   0.,    0.]]))</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;frames must be an integer&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">total1</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s1">&#39;total1 must be an integer&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">xs_m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;xs_m must be a numpy array&#39;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ys_m</span><span class="p">)</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="s1">&#39;ys_m must an a numpy array&#39;</span>
+    <span class="k">assert</span> <span class="n">xs_m</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">ys_m</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="s1">&#39;xs_m and ys_m must be the same size&#39;</span>
+
+    <span class="n">SM1x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+    <span class="n">SM1y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+    <span class="n">SM2xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">frames</span><span class="p">,</span> <span class="n">total1</span><span class="p">))</span>
+
+    <span class="n">xs_m</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">xs_m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ys_m</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">ys_m</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">geoM1x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+    <span class="n">geoM1y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">frames</span><span class="p">):</span>
+        <span class="n">bx</span> <span class="o">=</span> <span class="n">xs_m</span><span class="p">[</span><span class="n">frame</span><span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">cx</span> <span class="o">=</span> <span class="n">xs_m</span><span class="p">[:</span><span class="o">-</span><span class="n">frame</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">Mx</span> <span class="o">=</span> <span class="p">(</span><span class="n">bx</span> <span class="o">-</span> <span class="n">cx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">Mxa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">Mx</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">by</span> <span class="o">=</span> <span class="n">ys_m</span><span class="p">[</span><span class="n">frame</span><span class="p">:,</span> <span class="p">:]</span>
+        <span class="n">cy</span> <span class="o">=</span> <span class="n">ys_m</span><span class="p">[:</span><span class="o">-</span><span class="n">frame</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">My</span> <span class="o">=</span> <span class="p">(</span><span class="n">by</span> <span class="o">-</span> <span class="n">cy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">Mya</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">My</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">SM1x</span><span class="p">[</span><span class="n">frame</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">Mxa</span>
+        <span class="n">SM1y</span><span class="p">[</span><span class="n">frame</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">Mya</span>
+
+    <span class="n">SM2xy</span> <span class="o">=</span> <span class="n">SM1x</span> <span class="o">+</span> <span class="n">SM1y</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">SM2xy</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">geoM2xy</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">gSEM</span> <span class="o">=</span> <span class="n">stat</span><span class="o">.</span><span class="n">sem</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">geoM2xy</span> <span class="o">=</span> <span class="n">geoM2xy</span><span class="o">.</span><span class="n">data</span>
+
+    <span class="k">return</span> <span class="n">geoM2xy</span><span class="p">,</span> <span class="n">gSEM</span><span class="p">,</span> <span class="n">SM1x</span><span class="p">,</span> <span class="n">SM1y</span><span class="p">,</span> <span class="n">SM2xy</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Chad Curtis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

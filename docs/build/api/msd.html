@@ -1,0 +1,417 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>brain_diffusion.msd &mdash; brain_diffusion 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="brain_diffusion 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="index.html"/>
+        <link rel="next" title="brain_diffusion.histogram_utils" href="histogram_utils.html"/>
+        <link rel="prev" title="API" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> brain_diffusion
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">brain_diffusion.msd</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal"><span class="pre">brain_diffusion.msd</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="histogram_utils.html"><code class="docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">brain_diffusion</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">API</a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">brain_diffusion.msd</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/msd.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="brain-diffusion-msd">
+<h1><a class="reference internal" href="#module-brain_diffusion.msd" title="brain_diffusion.msd"><code class="xref py py-mod docutils literal"><span class="pre">brain_diffusion.msd</span></code></a><a class="headerlink" href="#brain-diffusion-msd" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><a class="reference internal" href="#module-brain_diffusion.msd" title="brain_diffusion.msd"><code class="xref py py-mod docutils literal"><span class="pre">brain_diffusion.msd</span></code></a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-brain_diffusion.msd"></span><dl class="function">
+<dt id="brain_diffusion.msd.MSD_iteration">
+<code class="descclassname">brain_diffusion.msd.</code><code class="descname">MSD_iteration</code><span class="sig-paren">(</span><em>folder</em>, <em>name</em>, <em>cut=1</em>, <em>totvids=1</em>, <em>conversion=(1</em>, <em>1</em>, <em>1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/brain_diffusion/msd.html#MSD_iteration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#brain_diffusion.msd.MSD_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Arranges trajectory xy data into numpy arrays of dimensions frames x particles</p>
+<dl class="docutils">
+<dt>folder <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Directory containing datasets to be analyzed.</dd>
+<dt>name <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd><p class="first">Base name of files to be analzed.  The code has a very specific naming
+convenction, and requires files to be of the structure:</p>
+<p>Traj_{}_{}.csv.format(name, video_number)</p>
+<p class="last">where name is the base name of the files and video number is the number
+associated with the video.  Numbers must begin at 1 and increase in
+units of 1.</p>
+</dd>
+<dt>cut <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Minimum number of frames for a trajectory to be included in the final
+dataset.  Trajectories in the csv file with less datasets will be cut
+out.</dd>
+<dt>totvids <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Total number of csv files to be compiled in the dataset.</dd>
+<dt>conversion: list of floats or integers</dt>
+<dd>Contains the frames per second associated with the video, the xy pixel
+resolution, and the z-stack depth respectively.  Currently the code
+discards z information.</dd>
+</dl>
+<dl class="docutils">
+<dt>total1 <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Total number of particles contained in all csv files being analyzed.</dd>
+<dt>frames <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Total number of frames in the video.</dd>
+<dt>x_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Contains x coordinates of all trajectories in all csv files being
+analyzed.  If a particle isn&#8217;t present in a frame, then it is filled in
+with a 0.</dd>
+<dt>y_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Similar to x_m with y coordinates.</dd>
+<dt>xs_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Contains x coordinates of all trajectories in all csv files being
+analyzed.  Trajectories have been shifted such that all trajectories
+begin at frame 0.</dd>
+<dt>ys_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Similar to xs_m with y coordinates.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+<span class="go">        df[(i-1)*n:i*n, 0] = np.ones(n) + i - 1</span>
+<span class="go">        df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1</span>
+<span class="go">        df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i</span>
+<span class="go">        df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i</span>
+<span class="go">        df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i</span>
+<span class="go">        df[(i-1)*n:i*n, 5] = np.zeros(n)</span>
+<span class="go">        df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;../Traj_test_data_1.tif.csv&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_data&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MSD_iteration</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="brain_diffusion.msd.fillin2">
+<code class="descclassname">brain_diffusion.msd.</code><code class="descname">fillin2</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/brain_diffusion/msd.html#fillin2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#brain_diffusion.msd.fillin2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fills in blanks in an input trajectory dataset.</p>
+<dl class="docutils">
+<dt>data <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span></dt>
+<dd>Must have 5 columns containing in order Track ID, frames, x coordinates,
+y coordinates, and z coordinates.  Must contain a single Track ID, no
+more.  Frames must be in ascending order.</dd>
+</dl>
+<dl class="docutils">
+<dt>filledin <span class="classifier-delimiter">:</span> <span class="classifier">numpy array</span></dt>
+<dd>Numpy array of size frames x 5 containing Track ID, frames, x
+coordinates, y coordinates, and z coordinates.  Frames are filled in
+using a carryover method (no regression performed).</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[:,</span> <span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span><span class="p">[:,</span> <span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fillin2</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<span class="go">array([[  1.,   0.,   0.,   0.,   0.],</span>
+<span class="go">       [  1.,   1.,   0.,   0.,   0.],</span>
+<span class="go">       [  1.,   2.,   2.,   2.,   0.],</span>
+<span class="go">       [  1.,   3.,   2.,   2.,   0.],</span>
+<span class="go">       [  1.,   4.,   4.,   4.,   0.],</span>
+<span class="go">       [  1.,   5.,   4.,   4.,   0.],</span>
+<span class="go">       [  1.,   6.,   6.,   6.,   0.],</span>
+<span class="go">       [  1.,   7.,   6.,   6.,   0.],</span>
+<span class="go">       [  1.,   8.,   8.,   8.,   0.],</span>
+<span class="go">       [  1.,   9.,   8.,   8.,   0.],</span>
+<span class="go">       [  1.,  10.,  10.,  10.,   0.]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="brain_diffusion.msd.vectorized_MMSD_calcs">
+<code class="descclassname">brain_diffusion.msd.</code><code class="descname">vectorized_MMSD_calcs</code><span class="sig-paren">(</span><em>frames</em>, <em>total1</em>, <em>xs_m</em>, <em>ys_m</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/brain_diffusion/msd.html#vectorized_MMSD_calcs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#brain_diffusion.msd.vectorized_MMSD_calcs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the geometrically averaged mean squared displacement of the input trajectories.</p>
+<dl class="docutils">
+<dt>frames <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Total number of frames in the video. Output from MSD_iteration</dd>
+<dt>total1 <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>Total number of particles contained in all csv files being analyzed.
+Output from MSD_iteration.</dd>
+<dt>xs_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Contains x coordinates of all trajectories in all csv files being
+analyzed.  Trajectories have been shifted such that all trajectories
+begin at frame 0. Output from MSD_iteration.</dd>
+<dt>ys_m <span class="classifier-delimiter">:</span> <span class="classifier">numpy array of dimensions frames x particles</span></dt>
+<dd>Similar to xs_m with y coordinates. Output from MSD_iteration.</dd>
+</dl>
+<dl class="docutils">
+<dt>geoM2xy <span class="classifier-delimiter">:</span> <span class="classifier">frames x 1 numpy.ndarray of float64s</span></dt>
+<dd>Average of the log 2D MSDs of input xy data.</dd>
+<dt>gSEM <span class="classifier-delimiter">:</span> <span class="classifier">frames x 1 numpy.ndarray of float64s</span></dt>
+<dd>Standard error of the log 2D MSDs of input xy data.</dd>
+<dt>SM1x <span class="classifier-delimiter">:</span> <span class="classifier">frames x total1 numpy.ndarray of float64s</span></dt>
+<dd>x component of the 2D MSD of input xy data for each trajectory.</dd>
+<dt>SM1y <span class="classifier-delimiter">:</span> <span class="classifier">frames x total1 numpy.ndarray of float64s</span></dt>
+<dd>y component of the 2D MSD of input xy data for each trajectory.</dd>
+<dt>SM2xy <span class="classifier-delimiter">:</span> <span class="classifier">frames x total1 numpy.ndarray of float64s</span></dt>
+<dd>2D MSDs of input xy data for each trajectory.</dd>
+</dl>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">n</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">p</span><span class="o">*</span><span class="n">n</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+<span class="go">        df[(i-1)*n:i*n, 0] = np.ones(n) + i - 1</span>
+<span class="go">        df[(i-1)*n:i*n, 1] = np.ones(n) + i - 1</span>
+<span class="go">        df[(i-1)*n:i*n, 2] = np.linspace(0, 10, n) + 2 + i</span>
+<span class="go">        df[(i-1)*n:i*n, 3] = np.linspace(0, 10, n) + i</span>
+<span class="go">        df[(i-1)*n:i*n, 4] = np.linspace(0, 10, n) + 3 + i</span>
+<span class="go">        df[(i-1)*n:i*n, 5] = np.zeros(n)</span>
+<span class="go">        df[(i-1)*n:i*n, 6:12] = np.zeros((n, 6))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s2">&quot;../Traj_test_data_1.tif.csv&quot;</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">folder</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;test_data&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cut</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">totvids</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">conversion</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">total1</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">xs_m</span><span class="p">,</span> <span class="n">ys_m</span><span class="p">,</span> <span class="n">x_m</span><span class="p">,</span> <span class="n">y_m</span> <span class="o">=</span> <span class="n">MSD_iteration</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vectorized_MMSD_calcs</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">total1</span><span class="p">,</span> <span class="n">xs_m</span><span class="p">,</span> <span class="n">ys_m</span><span class="p">)</span>
+<span class="go">(array([ 0.        ,  1.38629436,  2.07944154,  2.99573227,  3.4657359 ,</span>
+<span class="go">         3.95124372,  4.27666612,  4.60517019,  4.85203026,  5.09986643,</span>
+<span class="go">         5.29831737,  0.        ,  0.        ,  0.        ]),</span>
+<span class="go"> array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),</span>
+<span class="go"> array([[   0.,    0.],</span>
+<span class="go">        [   2.,    2.],</span>
+<span class="go">        [   4.,    4.],</span>
+<span class="go">        [  10.,   10.],</span>
+<span class="go">        [  16.,   16.],</span>
+<span class="go">        [  26.,   26.],</span>
+<span class="go">        [  36.,   36.],</span>
+<span class="go">        [  50.,   50.],</span>
+<span class="go">        [  64.,   64.],</span>
+<span class="go">        [  82.,   82.],</span>
+<span class="go">        [ 100.,  100.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.]]),</span>
+<span class="go"> array([[   0.,    0.],</span>
+<span class="go">        [   2.,    2.],</span>
+<span class="go">        [   4.,    4.],</span>
+<span class="go">        [  10.,   10.],</span>
+<span class="go">        [  16.,   16.],</span>
+<span class="go">        [  26.,   26.],</span>
+<span class="go">        [  36.,   36.],</span>
+<span class="go">        [  50.,   50.],</span>
+<span class="go">        [  64.,   64.],</span>
+<span class="go">        [  82.,   82.],</span>
+<span class="go">        [ 100.,  100.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.]]),</span>
+<span class="go"> array([[   0.,    0.],</span>
+<span class="go">        [   4.,    4.],</span>
+<span class="go">        [   8.,    8.],</span>
+<span class="go">        [  20.,   20.],</span>
+<span class="go">        [  32.,   32.],</span>
+<span class="go">        [  52.,   52.],</span>
+<span class="go">        [  72.,   72.],</span>
+<span class="go">        [ 100.,  100.],</span>
+<span class="go">        [ 128.,  128.],</span>
+<span class="go">        [ 164.,  164.],</span>
+<span class="go">        [ 200.,  200.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.],</span>
+<span class="go">        [   0.,    0.]]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="histogram_utils.html" class="btn btn-neutral float-right" title="brain_diffusion.histogram_utils" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Chad Curtis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

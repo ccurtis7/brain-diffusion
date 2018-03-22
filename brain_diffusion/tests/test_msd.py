@@ -10,7 +10,7 @@ import numpy.ma as ma
 import numpy.linalg as la
 import numpy.testing as npt
 
-from msd import fillin2, MSD_iteration, vectorized_MMSD_calcs
+from brain_diffusion.msd import fillin2, MSD_iteration, vectorized_MMSD_calcs
 
 
 def test_fillin2():
@@ -55,33 +55,33 @@ def test_MSD_iteration():
     name = 'test_data'
     total1, frames, xs_m, ys_m, x_m, y_m = MSD_iteration(folder, name)
 
-    test1 = np.array([[1.,   2.],
-                      [1.,   2.],
-                      [3.,   4.],
-                      [3.,   4.],
-                      [5.,   6.],
-                      [5.,   6.],
-                      [7.,   8.],
-                      [7.,   8.],
-                      [9.,  10.],
-                      [9.,  10.],
-                      [11.,  12.],
+    test1 = np.array([[3.,   2.],
+                      [3.,   2.],
+                      [5.,   4.],
+                      [5.,   4.],
+                      [7.,   6.],
+                      [7.,   6.],
+                      [9.,   8.],
+                      [9.,   8.],
+                      [11.,  10.],
+                      [0.,  10.],
+                      [0.,  12.],
                       [0.,   0.],
                       [0.,   0.],
                       [0.,   0.],
                       [0.,   0.]])
 
-    test2 = np.array([[4.,   5.],
-                      [4.,   5.],
-                      [6.,   7.],
-                      [6.,   7.],
-                      [8.,   9.],
-                      [8.,   9.],
-                      [10.,  11.],
-                      [10.,  11.],
-                      [12.,  13.],
-                      [12.,  13.],
-                      [14.,  15.],
+    test2 = np.array([[6.,   5.],
+                      [6.,   5.],
+                      [8.,   7.],
+                      [8.,   7.],
+                      [10.,   9.],
+                      [10.,   9.],
+                      [12.,  11.],
+                      [12.,  11.],
+                      [14.,  13.],
+                      [0.,  13.],
+                      [0.,  15.],
                       [0.,   0.],
                       [0.,   0.],
                       [0.,   0.],
@@ -90,8 +90,8 @@ def test_MSD_iteration():
     test3 = np.array([[0.,   0.],
                       [0.,   0.],
                       [0.,   0.],
-                      [1.,   0.],
-                      [1.,   2.],
+                      [0.,   0.],
+                      [0.,   2.],
                       [3.,   2.],
                       [3.,   4.],
                       [5.,   4.],
@@ -106,8 +106,8 @@ def test_MSD_iteration():
     test4 = np.array([[0.,   0.],
                       [0.,   0.],
                       [0.,   0.],
-                      [4.,   0.],
-                      [4.,   5.],
+                      [0.,   0.],
+                      [0.,   5.],
                       [6.,   5.],
                       [6.,   7.],
                       [8.,   7.],
@@ -149,7 +149,7 @@ def test_vectorized_MMSD_calcs():
                       3.95124372, 4.27666612, 4.60517019, 4.85203026, 5.09986643,
                       5.29831737,  0.,  0.,  0.])
 
-    test2 = np.zeros(14)
+    test2 = np.array([0., 0., 0., 0., 0., 0.,  0.,  0.,  0.,  2.54993321, 2.64915868, 0., 0., 0.])
 
     test3 = np.array([[0.,    0.],
                       [2.,    2.],
@@ -160,14 +160,14 @@ def test_vectorized_MMSD_calcs():
                       [36.,   36.],
                       [50.,   50.],
                       [64.,   64.],
-                      [82.,   82.],
-                      [100.,  100.],
+                      [0.,   82.],
+                      [0.,  100.],
                       [0.,    0.],
                       [0.,    0.],
                       [0.,    0.]])
 
     npt.assert_almost_equal(test1, geoM2xy)
-    npt.assert_equal(test2, gSEM)
+    npt.assert_almost_equal(test2, gSEM)
     npt.assert_equal(test3, SM1x)
     npt.assert_equal(test3, SM1y)
     npt.assert_equal(2*test3, SM2xy)

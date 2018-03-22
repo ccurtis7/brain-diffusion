@@ -62,7 +62,7 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-#csv and Excel files
+#Other
 *.png
 *.tif
 *.csv
@@ -70,3 +70,4 @@ target/
 *.xls
 *.xlsx
 *.zip
+*.pyc

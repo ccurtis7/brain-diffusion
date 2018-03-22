@@ -8,12 +8,13 @@ import scipy.stats as stat
 import numpy as np
 import sys
 import os
+from brain_diffusion.histogram_utils import histogram_by_video
+import pytest
 
-modulef = 'C:/Users/koolk/Desktop/brain_diffusion/brain_diffusion/histogram/'
-sys.path.insert(0, modulef)
-from histogram_utils import histogram_by_video
+is_travis = "CI" in os.environ.keys()
 
 
+@pytest.mark.skipif(is_travis, reason="This doesn't work on Travis yet.")
 def test_histogram_by_video():
     nframe = 51
     npar = 1000

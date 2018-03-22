@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>brain_diffusion.histogram_utils &mdash; brain_diffusion 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="brain_diffusion 0.1 documentation" href="../index.html"/>
+        <link rel="up" title="API" href="index.html"/>
+        <link rel="prev" title="brain_diffusion.msd" href="msd.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> brain_diffusion
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../documentation.html">Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="msd.html"><code class="docutils literal"><span class="pre">brain_diffusion.msd</span></code></a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href=""><code class="docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">brain_diffusion</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">API</a> &raquo;</li>
+      
+    <li><code class="docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/histogram_utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="brain-diffusion-histogram-utils">
+<h1><a class="reference internal" href="#module-brain_diffusion.histogram_utils" title="brain_diffusion.histogram_utils"><code class="xref py py-mod docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a><a class="headerlink" href="#brain-diffusion-histogram-utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><a class="reference internal" href="#module-brain_diffusion.histogram_utils" title="brain_diffusion.histogram_utils"><code class="xref py py-mod docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-brain_diffusion.histogram_utils"></span><dl class="function">
+<dt id="brain_diffusion.histogram_utils.histogram_by_video">
+<code class="descclassname">brain_diffusion.histogram_utils.</code><code class="descname">histogram_by_video</code><span class="sig-paren">(</span><em>SMfilename</em>, <em>xlabel='Log Diffusion Coefficient Dist'</em>, <em>ylabel='Trajectory Count'</em>, <em>fps=100.02</em>, <em>y_range=5000</em>, <em>frame_range=range(5</em>, <em>30</em>, <em>5)</em>, <em>analysis='log'</em>, <em>theta='D'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/brain_diffusion/histogram_utils.html#histogram_by_video"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#brain_diffusion.histogram_utils.histogram_by_video" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plots a histogram of mean squared displacements or diffusion coefficients from input data.</p>
+<dl class="docutils">
+<dt>SMfilename <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Filename of particle MSDs.  Must be a csv file, comma delimited. Must be
+organized as frames x particles.</dd>
+<dt>xlabel <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>X label of the output graph.</dd>
+<dt>ylabel <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Y label of the output graph.</dd>
+<dt>fps <span class="classifier-delimiter">:</span> <span class="classifier">float or int</span></dt>
+<dd>The frame rate of the video being analyzed.  Only required if graphing
+diffusion coefficients rather than mean squared displacements.</dd>
+<dt>y_range <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Y range of the output graph.</dd>
+<dt>frame_range <span class="classifier-delimiter">:</span> <span class="classifier">range</span></dt>
+<dd>Range containing which frames the user wishes to be plotted.</dd>
+<dt>analysis <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Desired type of data to be plotted.  If input is &#8216;log&#8217;, plots the natural
+logarithm of the data.  Any other input will plot the raw input data.</dd>
+<dt>theta <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>Desired type of data to be plotted.  If input is &#8216;D&#8217;, plots diffusion
+coefficients.  Any other input will plot the mean squared displacements.</dd>
+</dl>
+<p>Returns &#8216;Graph completed successfully&#8217; if function is successful.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">nframe</span> <span class="o">=</span> <span class="mi">51</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">npar</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">SMxy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nframe</span><span class="p">,</span> <span class="n">npar</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">nframe</span><span class="p">):</span>
+<span class="go">        SMxy[frame, :] = np.random.normal(loc=0.5*frame, scale=0.5, size=npar)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="s1">&#39;sample_file.csv&#39;</span><span class="p">,</span> <span class="n">SMxy</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">histogram_by_video</span><span class="p">(</span><span class="s1">&#39;sample_file.csv&#39;</span><span class="p">,</span> <span class="n">y_range</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">analysis</span><span class="o">=</span><span class="s2">&quot;nlog&quot;</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="s2">&quot;MSD&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;sample_file.csv&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;sample_file_hist.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="msd.html" class="btn btn-neutral" title="brain_diffusion.msd" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Chad Curtis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

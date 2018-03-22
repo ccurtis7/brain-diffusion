@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>brain_diffusion.histogram_utils &mdash; brain_diffusion 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="brain_diffusion 0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> brain_diffusion
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">brain_diffusion</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>brain_diffusion.histogram_utils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for brain_diffusion.histogram_utils</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.ma</span> <span class="kn">as</span> <span class="nn">ma</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stat</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="kn">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="kn">as</span> <span class="nn">stat</span>
+
+
+<div class="viewcode-block" id="histogram_by_video"><a class="viewcode-back" href="../../api/histogram_utils.html#brain_diffusion.histogram_utils.histogram_by_video">[docs]</a><span class="k">def</span> <span class="nf">histogram_by_video</span><span class="p">(</span><span class="n">SMfilename</span><span class="p">,</span> <span class="n">xlabel</span><span class="o">=</span><span class="s1">&#39;Log Diffusion Coefficient Dist&#39;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s1">&#39;Trajectory Count&#39;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mf">100.02</span><span class="p">,</span>
+                       <span class="n">y_range</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">frame_range</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">analysis</span><span class="o">=</span><span class="s1">&#39;log&#39;</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="s1">&#39;D&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plots a histogram of mean squared displacements or diffusion coefficients from input data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SMfilename : string</span>
+<span class="sd">        Filename of particle MSDs.  Must be a csv file, comma delimited. Must be</span>
+<span class="sd">        organized as frames x particles.</span>
+<span class="sd">    xlabel : string</span>
+<span class="sd">        X label of the output graph.</span>
+<span class="sd">    ylabel : string</span>
+<span class="sd">        Y label of the output graph.</span>
+<span class="sd">    fps : float or int</span>
+<span class="sd">        The frame rate of the video being analyzed.  Only required if graphing</span>
+<span class="sd">        diffusion coefficients rather than mean squared displacements.</span>
+<span class="sd">    y_range : int</span>
+<span class="sd">        Y range of the output graph.</span>
+<span class="sd">    frame_range : range</span>
+<span class="sd">        Range containing which frames the user wishes to be plotted.</span>
+<span class="sd">    analysis : string</span>
+<span class="sd">        Desired type of data to be plotted.  If input is &#39;log&#39;, plots the natural</span>
+<span class="sd">        logarithm of the data.  Any other input will plot the raw input data.</span>
+<span class="sd">    theta : string</span>
+<span class="sd">        Desired type of data to be plotted.  If input is &#39;D&#39;, plots diffusion</span>
+<span class="sd">        coefficients.  Any other input will plot the mean squared displacements.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Returns &#39;Graph completed successfully&#39; if function is successful.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; nframe = 51</span>
+<span class="sd">    &gt;&gt;&gt; npar = 1000</span>
+<span class="sd">    &gt;&gt;&gt; SMxy = np.zeros((nframe, npar))</span>
+<span class="sd">    &gt;&gt;&gt; for frame in range(0, nframe):</span>
+<span class="sd">            SMxy[frame, :] = np.random.normal(loc=0.5*frame, scale=0.5, size=npar)</span>
+<span class="sd">    &gt;&gt;&gt; np.savetxt(&#39;sample_file.csv&#39;, SMxy, delimiter=&#39;,&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; histogram_by_video(&#39;sample_file.csv&#39;, y_range=500, analysis=&quot;nlog&quot;, theta=&quot;MSD&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; os.remove(&#39;sample_file.csv&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; os.remove(&#39;sample_file_hist.png&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">SMfilename</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;SMfilename must be a string&quot;</span>
+    <span class="k">assert</span> <span class="n">SMfilename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span> <span class="s2">&quot;SMfilename must be a csv file.&quot;</span>
+    <span class="c1"># assert os.path.isfile(SMfilename), &quot;SMfilename must exist.&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">SMfilename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">))</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="s2">&quot;SMfilename must be comma delimited.&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">xlabel</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;xlabel must be a string&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">ylabel</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;ylabel must be a string&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">fps</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">float</span> <span class="ow">or</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;fps must be float or int&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">y_range</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;y_range must be int&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">frame_range</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">range</span><span class="p">,</span> <span class="s2">&quot;frame_range must be a range&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;analysis must be string&quot;</span>
+    <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="ow">is</span> <span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;theta must be string&quot;</span>
+
+    <span class="c1"># load data</span>
+    <span class="n">SM2xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="n">SMfilename</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+
+    <span class="c1"># generate keys for legend</span>
+    <span class="n">bar</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">keys</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="n">keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">entries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="mi">50</span><span class="o">*</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;ms&#39;</span><span class="p">)</span>
+
+    <span class="n">set_x_limit</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">set_y_limit</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;axes.prop_cycle&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">by_key</span><span class="p">()[</span><span class="s1">&#39;color&#39;</span><span class="p">]</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">frame_range</span><span class="p">:</span>
+        <span class="n">toi</span> <span class="o">=</span> <span class="n">i</span><span class="o">/</span><span class="n">fps</span>
+        <span class="k">if</span> <span class="n">theta</span> <span class="o">==</span> <span class="s2">&quot;MSD&quot;</span><span class="p">:</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">factor</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">toi</span>
+
+        <span class="k">if</span> <span class="n">analysis</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">SM2xy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span><span class="o">/</span><span class="n">factor</span><span class="p">)</span>
+            <span class="n">test_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">76</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dist</span> <span class="o">=</span> <span class="n">ma</span><span class="o">.</span><span class="n">masked_equal</span><span class="p">(</span><span class="n">SM2xy</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:],</span> <span class="mi">0</span><span class="p">)</span><span class="o">/</span><span class="n">factor</span>
+            <span class="n">test_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">76</span><span class="p">)</span>
+
+        <span class="n">unmask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">invert</span><span class="p">(</span><span class="n">ma</span><span class="o">.</span><span class="n">getmask</span><span class="p">(</span><span class="n">dist</span><span class="p">))</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span><span class="p">[</span><span class="n">unmask</span><span class="p">]</span>
+        <span class="n">histogram</span><span class="p">,</span> <span class="n">test_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">test_bins</span><span class="p">)</span>
+
+        <span class="c1"># Plot_general_histogram_code</span>
+        <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dist</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">rc</span><span class="p">(</span><span class="s1">&#39;axes&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">plot</span> <span class="o">=</span> <span class="n">histogram</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">test_bins</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">bins</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="n">bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">bar</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="n">counter</span><span class="p">]]</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">center</span><span class="p">,</span> <span class="n">plot</span><span class="p">,</span> <span class="n">align</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="n">width</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">counter</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">entries</span><span class="p">[</span><span class="n">counter</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">counter</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">xlabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">ylabel</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+        <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">set_y_limit</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">y_range</span><span class="p">])</span>
+
+        <span class="k">if</span> <span class="n">set_x_limit</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">x_range</span><span class="p">])</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">SMfilename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;_hist.png&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s1">&#39;Graph completed successfully&#39;</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Chad Curtis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

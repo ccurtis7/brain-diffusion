@@ -56,12 +56,20 @@ def fillin2(data):
     return filledin
 
 
-def MSD_iteration(folder, name, cut, totvids, conversion, frames):
-    """
-    Cleans up data for MSD analysis from csv files.  Outputs in form of
-    dictionaries.
-    """
+def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
 
+    assert type(folder) is str, 'folder must be a string'
+    assert folder[-1] == '/', 'folder must end with a /'
+    assert type(name) is str, 'name must be a string'
+    assert 'Traj_{}_1.tif.csv'.format(name) in os.listdir(folder), 'folder must contain Traj_{}_1_.tif.csv'.format(name)
+    assert type(cut) is int, 'cut must be an integer'
+    assert type(totvids) is int, "totvids must be an integer"
+    for i in range(1, totvids+1):
+        assert 'Traj_{}_{}.tif.csv'.format(name, i) in os.listdir(folder), "folder must contain 'Traj_{}_{}_.tif.csv".format(name, i)
+    assert type(conversion) is tuple, "conversion must be a tuple"
+    assert len(conversion) == 3, "conversion must contain 3 elements"
+
+    frames = 0
     trajectory = dict()
     tots = dict()  # Total particles in each video
     newtots = dict()  # Cumulative total particles.
@@ -72,6 +80,7 @@ def MSD_iteration(folder, name, cut, totvids, conversion, frames):
 
     for num in range(1, totvids + 1):
         trajectory[num] = np.genfromtxt(folder+'Traj_{}_{}.tif.csv'.format(name, num), delimiter=",")
+        trajectory[num] = np.delete(trajectory[num], 0, 0)
         trajectory[num] = np.delete(trajectory[num], 0, 1)
 
         tots[num] = trajectory[num][-1, 0].astype(np.int64)
@@ -79,6 +88,9 @@ def MSD_iteration(folder, name, cut, totvids, conversion, frames):
 
         tlen[num] = trajectory[num].shape[0]
         tlength[num] = tlength[num-1] + tlen[num]
+
+        if np.max(trajectory[num][:, 1]) > frames:
+            frames = int(np.max(trajectory[num][:, 1]))
 
     placeholder = np.zeros((tlength[totvids], 11))
 
@@ -98,10 +110,10 @@ def MSD_iteration(folder, name, cut, totvids, conversion, frames):
     fixed[:, 2:4] = conversion[0] * rawdataset[:, 2:4]
     fixed[:, 4] = conversion[2] * rawdataset[:, 4]
 
-    x = np.zeros((frames, total1 - 1))
-    y = np.zeros((frames, total1 - 1))
-    xs = np.zeros((frames, total1 - 1))
-    ys = np.zeros((frames, total1 - 1))
+    x = np.zeros((frames+1, total1))
+    y = np.zeros((frames+1, total1))
+    xs = np.zeros((frames+1, total1))
+    ys = np.zeros((frames+1, total1))
 
     nones = 0
     cutoff = cut
@@ -123,57 +135,53 @@ def MSD_iteration(folder, name, cut, totvids, conversion, frames):
             ys[0:int(holdplease[-1, 1])+1-int(holdplease[0, 1]), num - nones - 1] = holdplease[:, 3]
 
     total1 = total1 - nones - 1
-    x_m = x[:, :total1-1]
-    y_m = y[:, :total1-1]
-    xs_m = xs[:, :total1-1]
-    ys_m = ys[:, :total1-1]
 
-    return total1, xs_m, ys_m, x_m, y_m
+    x_m = x[:, :total1]
+    y_m = y[:, :total1]
+    xs_m = xs[:, :total1]
+    ys_m = ys[:, :total1]
+
+    return total1, frames, xs_m, ys_m, x_m, y_m
 
 
-def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m, x_m, y_m, frame_m):
+def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m):
 
-    SM1x = np.zeros((frames, total1-1))
-    SM1y = np.zeros((frames, total1-1))
-    SM2xy = np.zeros((frames, total1-1))
+    assert type(frames) is int, 'frames must be an integer'
+    assert type(total1) is int, 'total1 must be an integer'
+    assert type(xs_m) is np.ndarray, 'xs_m must be a numpy array'
+    assert type(ys_m) is np.ndarray, 'ys_m must an a numpy array'
+    assert xs_m.shape == ys_m.shape, 'xs_m and ys_m must be the same size'
+
+    SM1x = np.zeros((frames, total1))
+    SM1y = np.zeros((frames, total1))
+    SM2xy = np.zeros((frames, total1))
 
     xs_m = ma.masked_equal(xs_m, 0)
     ys_m = ma.masked_equal(ys_m, 0)
 
-    x_m = ma.masked_equal(x_m, 0)
-    y_m = ma.masked_equal(y_m, 0)
+    geoM1x = np.zeros(frames)
+    geoM1y = np.zeros(frames)
 
-    geoM1x = np.zeros(frame_m)
-    geoM1y = np.zeros(frame_m)
-
-    for frame in range(1, frame_m):
-        bx = xs_m[frame, :]
+    for frame in range(1, frames):
+        bx = xs_m[frame:, :]
         cx = xs_m[:-frame, :]
         Mx = (bx - cx)**2
-
         Mxa = np.mean(Mx, axis=0)
-        # Mxab = np.mean(np.log(Mxa), axis=0)
 
-        # geoM1x[frame] = Mxab
-
-        by = ys_m[frame, :]
+        by = ys_m[frame:, :]
         cy = ys_m[:-frame, :]
         My = (by - cy)**2
-
         Mya = np.mean(My, axis=0)
-        # Myab = np.mean(np.log(Mya), axis=0)
 
-        # geoM1y[frame] = Myab
         SM1x[frame, :] = Mxa
         SM1y[frame, :] = Mya
 
-    dist = np.log(Mya+Mxa)
-    # unmask = np.invert(ma.getmask(dist))
-    # dist2 = dist[unmask]
-
-    geoM2xy = np.ma.mean(dist, axix=0)
-    gSEM = stat.sem(dist, axis=0)
     SM2xy = SM1x + SM1y
+    dist = ma.log(ma.masked_equal(SM2xy, 0))
+
+    geoM2xy = ma.mean(dist, axis=1)
+    gSEM = stat.sem(dist, axis=1)
+    geoM2xy = geoM2xy.data
 
     return geoM2xy, gSEM, SM1x, SM1y, SM2xy
 
@@ -203,7 +211,7 @@ frame_m = 70  # atm I can't go lower than the actual value.
 parameters = {}
 parameters["channels"] = ["RED"]
 parameters["surface functionalities"] = ["nPEG"]
-parameters["slices"] = ["S1", "S2", "S3", "S4"]
+parameters["slices"] = [1, 2, 3, 4]
 parameters["videos"] = [1, 2, 3, 4, 5]
 parameters["replicates"] = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
@@ -231,13 +239,13 @@ for channel in channels:
             for video in videos:
                 if rank == check_rank:
                     suffix = suffixes[slice_counter]
-                    sample_name = "well{}_XY{}_{}".format(slic, video)
+                    sample_name = "well{}_XY{}".format(slic, video)
                     DIR = folder
 
-                    total1, xs, ys, x, y = MSD_iteration(DIR, sample_name, cut, totvids, conversion, frame_m)
+                    total1, frames, xs_m, ys_m, x_m, ys_m = MSD_iteration(DIR, sample_name, cut, totvids, conversion)
 
                     geoM2xy[sample_name], gSEM[sample_name], SM1x[sample_name], SM1y[sample_name],\
-                        SM2xy[sample_name] = vectorized_MMSD_calcs(frames, total1, xs, ys, x, y, frame_m)
+                        SM2xy[sample_name] = vectorized_MMSD_calcs(frames, total1, xs_m, ys_m)
                     np.savetxt(DIR+'geoM2xy_{}.csv'.format(sample_name), geoM2xy[sample_name], delimiter=',')
                     np.savetxt(DIR+'gSEM_{}.csv'.format(sample_name), gSEM[sample_name], delimiter=',')
                     np.savetxt(DIR+'SM2xy_{}.csv'.format(sample_name), SM2xy[sample_name], delimiter=',')

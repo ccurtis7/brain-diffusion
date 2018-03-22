@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Welcome to brain_diffusion &mdash; brain_diffusion 0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="brain_diffusion 0.1 documentation" href="#"/>
+        <link rel="next" title="Documentation" href="documentation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> brain_diffusion
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="#">brain_diffusion</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="#">Docs</a> &raquo;</li>
+      
+    <li>Welcome to brain_diffusion</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-brain_diffusion">
+<span id="welcome-to-brain-diffusion"></span><span id="reference"></span><h1>Welcome to brain_diffusion<a class="headerlink" href="#module-brain_diffusion" title="Permalink to this headline">¶</a></h1>
+<p>brain_diffusion is a python library designed to analyze and visualize trajectory
+data from the ImageJ plugin <a class="reference external" href="http://mosaic.mpi-cbg.de/?q=downloads/imageJ">MOSAIC</a>.</p>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">brain_diffusion.msd</span> <span class="kn">as</span> <span class="nn">msd</span>
+
+<span class="n">DIR</span> <span class="o">=</span> <span class="s1">&#39;../data/&#39;</span>
+<span class="nb">file</span> <span class="o">=</span> <span class="s1">&#39;sample_data&#39;</span>
+
+<span class="c1"># Prepare trajectory file</span>
+<span class="n">total</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">MSD_iteration</span><span class="p">(</span><span class="n">DIR</span><span class="p">,</span> <span class="nb">file</span><span class="p">)</span>
+
+<span class="c1"># Calculate mean squared displacements and their geometric averages</span>
+<span class="n">geoM2xy</span><span class="p">,</span> <span class="n">gSEM</span><span class="p">,</span> <span class="n">SM1x</span><span class="p">,</span> <span class="n">SM1y</span><span class="p">,</span> <span class="n">SM2xy</span> <span class="o">=</span> <span class="n">msd</span><span class="o">.</span><span class="n">vectorized_MMSD_calcs</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>Mean squared displacement (MSD) calculations are a standard calculation performed by
+scientists and researchers who use multi-particle tracking techniques.
+Brain_diffusion is a centralized analysis and visualization package to calculate
+MSDs and diffusion coefficients from trajectory data as calculated using the MOSIAC
+ImageJ plugin developed by in the MOSAIC Group at the Max Planck Institute of
+Molecular Cell Biology and Genetics in Dresden.  This calculation package is the
+primary tool for MSD calculations of nanoparticles in the brain in the <a class="reference external" href="https://www.nancelab.com/">Nance
+research group</a> at the University of Washington.</p>
+<div class="toctree-wrapper compound" id="user-documentation">
+<p class="caption"><span class="caption-text">User Documentation</span><a class="headerlink" href="#user-documentation" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="documentation.html">Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#msd">MSD</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#hyak">Hyak</a></li>
+<li class="toctree-l2"><a class="reference internal" href="documentation.html#visualization">Visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/msd.html"><code class="docutils literal"><span class="pre">brain_diffusion.msd</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/histogram_utils.html"><code class="docutils literal"><span class="pre">brain_diffusion.histogram_utils</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/tree/master/brain_diffusion/notebooks">examples</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion">code</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/ccurtis7/brain_diffusion/issues">bugs</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="documentation.html" class="btn btn-neutral float-right" title="Documentation" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Chad Curtis.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

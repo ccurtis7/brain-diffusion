@@ -1,0 +1,7 @@
+[run]
+branch = True
+source = brain_diffusion/*
+include = brain_diffusion/*
+omit = */setup.py
+[report]
+include = brain_diffusion/*

@@ -24,14 +24,14 @@ def fillin2(data):
         more.  Frames must be in ascending order.
 
     Returns
-    ----------
+    -------
     filledin : numpy array
         Numpy array of size frames x 5 containing Track ID, frames, x
         coordinates, y coordinates, and z coordinates.  Frames are filled in
         using a carryover method (no regression performed).
 
     Examples
-    ----------
+    --------
     >>> n = 6
     >>> df = np.zeros((6, 5))
     >>> df[:, 0] = np.ones(6)
@@ -117,7 +117,7 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
         discards z information.
 
     Returns
-    ----------
+    -------
     total1 : integer
         Total number of particles contained in all csv files being analyzed.
     frames : integer
@@ -136,7 +136,7 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
         Similar to xs_m with y coordinates.
 
     Examples
-    ----------
+    --------
     >>> n = 6
     >>> p = 2
     >>> df = np.zeros((p*n, 12))
@@ -177,6 +177,7 @@ def MSD_iteration(folder, name, cut=1, totvids=1, conversion=(1, 1, 1)):
 
     for num in range(1, totvids + 1):
         trajectory[num] = np.genfromtxt(folder+'Traj_{}_{}.tif.csv'.format(name, num), delimiter=",")
+        trajectory[num] = np.delete(trajectory[num], 0, 0)
         trajectory[num] = np.delete(trajectory[num], 0, 1)
 
         tots[num] = trajectory[num][-1, 0].astype(np.int64)
@@ -258,7 +259,7 @@ def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m):
         Similar to xs_m with y coordinates. Output from MSD_iteration.
 
     Returns
-    ----------
+    -------
     geoM2xy : frames x 1 numpy.ndarray of float64s
         Average of the log 2D MSDs of input xy data.
     gSEM : frames x 1 numpy.ndarray of float64s
@@ -270,8 +271,8 @@ def vectorized_MMSD_calcs(frames, total1, xs_m, ys_m):
     SM2xy : frames x total1 numpy.ndarray of float64s
         2D MSDs of input xy data for each trajectory.
 
-    Examples:
-    ----------
+    Examples
+    --------
     >>> n = 6
     >>> p = 2
     >>> df = np.zeros((p*n, 12))
